@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Word Meadows case study by Mariyam Nesha – relaxing crossword game UI and game design.">
+  <title>Word Meadows | Mariyam Nesha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+
+    :root {
+      --orange: #F47B20;
+      --brown: #7A3E10;
+      --soft: #FCE8DC;
+      --soft-2: #FDF2EA;
+      --label: #F9CDAE;
+      --dark: #161616;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #fff; color: #111; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ---------- Navbar ---------- */
+    .nav-wrap { padding: 40px 70px 0; }
+    .navbar {
+      max-width: 1300px; margin: 0 auto;
+      background: var(--dark); border-radius: 50px; height: 86px;
+      padding: 0 8px 0 34px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .navbar .logo img { height: 100px; }
+    .nav-links { display: flex; list-style: none; gap: 10px; }
+    .nav-links a {
+      display: block; color: #fff; font-size: 20px;
+      padding: 18px 40px; border-radius: 40px;
+      transition: background .25s, color .25s;
+    }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-links a.active { background: var(--orange); color: #fff; }
+
+    main { max-width: 1300px; margin: 0 auto; padding: 0 70px 100px; box-sizing: content-box; }
+
+    /* ---------- Section titles ---------- */
+    .sec-title { text-align: center; font-size: 40px; font-weight: 600; letter-spacing: -0.5px; }
+    .sec-title span { color: var(--orange); }
+    .sec-sub { text-align: center; font-size: 18px; line-height: 1.6; color: #333; max-width: 760px; margin: 18px auto 0; }
+    .sec-sub.w-720 { max-width: 720px; }
+    section.block { margin-top: 110px; position: relative; }
+    .soft-box { background: var(--soft); border-radius: 36px; padding: 70px 70px 80px; position: relative; }
+
+    /* ---------- Hero ---------- */
+    .page-title { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 70px 0 44px; }
+    .page-title h1 { font-size: 52px; font-weight: 600; letter-spacing: -0.5px; }
+    .page-title h1 span { color: var(--orange); }
+    .hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.58fr); gap: 48px; align-items: stretch; }
+    /* photo with see-through white frame */
+    .hero-img { position: relative; height: 100%; border-radius: 30px; overflow: hidden; background: #F1E6DD; box-shadow: 0 10px 30px rgba(0,0,0,.08); cursor: zoom-in; }
+    .hero-img img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-img::after { content: ""; position: absolute; inset: 0; border: 16px solid rgba(255,255,255,.35); border-radius: 30px; pointer-events: none; }
+    .overview { background: var(--soft); border-radius: 26px; padding: 44px 44px 40px; }
+    .overview h2 { color: var(--brown); font-size: 30px; font-weight: 600; margin-bottom: 14px; }
+    .overview > p { font-size: 18px; line-height: 1.6; color: #333; margin-bottom: 30px; }
+    .ov-row { display: grid; grid-template-columns: minmax(0,0.62fr) minmax(0,1fr); gap: 26px; margin-bottom: 26px; }
+    .fieldset { min-width: 0; border: 1.5px solid #E2C9B8; border-radius: 14px; padding: 0 22px 18px; position: relative; }
+    .fieldset legend { font-size: 22px; font-weight: 600; padding: 0 8px; margin-left: -8px; }
+    .fieldset .tools { display: flex; gap: 36px; padding: 8px 26px 0; }
+    .fieldset .tools img { width: 50px; height: 50px; border-radius: 10px; }
+    .fieldset .val { font-size: 17px; font-weight: 500; padding-top: 16px; line-height: 1.7; }
+
+    /* ---------- Target players ---------- */
+    .players { display: grid; grid-template-columns: repeat(3, 1fr); gap: 50px; max-width: 1100px; margin: 50px auto 0; }
+    .player { background: var(--soft); border-radius: 22px; padding: 0 26px 26px; margin-top: 110px; text-align: center; position: relative; }
+    .player .pic { width: 62%; margin: -110px auto 0; aspect-ratio: 1 / 1; }
+    .player .pic img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+    .player .pct {
+      position: absolute; top: -18px; right: -12px;
+      width: 76px; height: 76px; border-radius: 50%;
+      background: var(--orange); color: #fff; font-size: 26px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 16px rgba(244,123,32,.35);
+    }
+    .player h4 { font-size: 19px; font-weight: 600; line-height: 1.5; margin: 14px 0 8px; }
+    .player p { font-size: 16px; line-height: 1.6; color: #333; }
+
+    /* ---------- Competitor table ---------- */
+    .comp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 22px; max-width: 1100px; margin: 46px auto 0; }
+    .comp .brand { border-radius: 10px; overflow: hidden; aspect-ratio: 2.5 / 1; background: #fff; border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,.08); }
+    .comp .brand img { width: 100%; height: 100%; object-fit: cover; }
+    .comp .cell {
+      background: #fff; border-radius: 10px; min-height: 64px;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      padding: 10px 16px; font-size: 16px; font-weight: 500; line-height: 1.35; color: #222;
+      box-shadow: 0 2px 6px rgba(0,0,0,.04);
+    }
+    .comp .cell.head { background: var(--label); border: 3px solid #fff; }
+
+    /* ---------- Challenges ---------- */
+    .challenges { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 26px; max-width: 1150px; margin: 50px auto 0; position: relative; }
+    .ch { border: 2px dashed #D9B49B; border-radius: 22px; padding: 34px 34px; text-align: center; }
+    .ch h4 { color: var(--brown); font-size: 24px; font-weight: 600; line-height: 1.25; margin-bottom: 16px; }
+    .ch p { font-size: 16px; line-height: 1.75; color: #333; }
+    .ch-side { align-self: center; }
+    .ch-mid { display: flex; flex-direction: column; gap: 22px; }
+
+    /* ---------- Mapping ---------- */
+    .map-img { background: var(--soft-2); border-radius: 24px; margin-top: 44px; padding: 26px; cursor: zoom-in; }
+    .map-img img { width: 100%; height: auto; margin: 0 auto; min-height: 200px; object-fit: contain; }
+    .systems { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 34px; }
+    .systems h4 { color: var(--brown); font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+    .systems p { font-size: 18px; line-height: 1.55; color: #333; }
+
+    /* ---------- Wireframes ---------- */
+    .wires { display: grid; grid-template-columns: 1fr 70px 1fr 70px 1fr; align-items: center; max-width: 1000px; margin: 46px auto 0; }
+    .wire { text-align: center; }
+    /* whole wireframe shown as it is: no extra box, nothing cropped */
+    .wire .shot { cursor: zoom-in; }
+    .wire .shot img { width: 100%; height: auto; }
+    .wire span { display: block; font-size: 18px; margin-top: 18px; }
+    .arrow { height: 2px; background: #C0753E; position: relative; margin: 0 10px; top: -22px; }
+    .arrow::after { content: ""; position: absolute; right: -2px; top: -5px; width: 10px; height: 10px; border-right: 2px solid #C0753E; border-top: 2px solid #C0753E; transform: rotate(45deg); }
+
+    /* ---------- Design system ---------- */
+    .ds-box { padding-bottom: 150px; }
+    .typo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; margin-top: 50px; padding: 0 60px; }
+    .typo h5 { font-size: 22px; font-weight: 500; }
+    .typo .fname { font-family: 'Kanit', sans-serif; font-size: 96px; font-weight: 500; line-height: 1.15; margin: 6px 0 14px; }
+    .typo .chars { font-family: 'Kanit', sans-serif; font-weight: 300; font-size: 30px; line-height: 1.2; color: #8a8a8a; word-break: break-all; }
+    .aa-wrap { text-align: center; }
+    .aa {
+      display: inline-flex; align-items: flex-end; gap: 2px;
+      font-family: 'Kanit', sans-serif; line-height: .8;
+      padding: 18px 14px 10px; position: relative;
+      background-image:
+        repeating-linear-gradient(90deg, #999 0 8px, transparent 8px 16px),
+        repeating-linear-gradient(90deg, #999 0 8px, transparent 8px 16px),
+        repeating-linear-gradient(0deg, #999 0 8px, transparent 8px 16px),
+        repeating-linear-gradient(0deg, #999 0 8px, transparent 8px 16px);
+      background-size: 100% 1.5px, 100% 1.5px, 1.5px 100%, 1.5px 100%;
+      background-position: 0 6px, 0 calc(100% - 4px), 6px 0, calc(100% - 6px) 0;
+      background-repeat: no-repeat;
+    }
+    .aa .A { font-size: 220px; font-weight: 700; color: #7E4A1E; }
+    .aa .a { font-size: 175px; font-weight: 600; color: transparent; -webkit-text-stroke: 3px #7E4A1E; }
+    .weights { display: flex; justify-content: center; gap: 34px; margin-top: 18px; font-size: 18px; }
+    .weights span:nth-child(1) { font-weight: 400; }
+    .weights span:nth-child(2) { font-weight: 500; }
+    .weights span:nth-child(3) { font-weight: 600; }
+    .weights span:nth-child(4) { font-weight: 700; }
+    .swatches { display: flex; justify-content: center; gap: 18px; margin-top: -110px; position: relative; z-index: 2; padding: 0 40px; }
+    .sw {
+      width: 170px; aspect-ratio: 1; border: 10px solid #fff; border-radius: 6px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+      transition: transform .3s;
+    }
+    /* NOTE: these are the template colours – replace them with the Word Meadows palette */
+    .sw:nth-child(1) { background: linear-gradient(160deg, #8F6CF7, #A953F7); transform: rotate(-14deg); }
+    .sw:nth-child(2) { background: linear-gradient(160deg, #EDC100, #EE9A08); transform: rotate(20deg) translateY(14px); }
+    .sw:nth-child(3) { background: linear-gradient(160deg, #3FD07F, #12A84A); transform: rotate(-8deg) translateY(6px); }
+    .sw:nth-child(4) { background: #D9C4FB; transform: rotate(24deg) translateY(30px); }
+    .sw:nth-child(5) { background: linear-gradient(160deg, #F46B60, #D33A2E); transform: rotate(-16deg) translateY(14px); }
+    .sw:hover { transform: rotate(0) scale(1.05); }
+
+    /* ---------- UI galleries ---------- */
+    .gallery { margin-top: 56px; border: 1.5px solid #e6e6e6; border-radius: 28px; position: relative; }
+    .gallery-head {
+      position: absolute; top: -22px; left: 26px;
+      background: #fff; border: none; cursor: pointer;
+      font-size: 28px; font-weight: 500; color: #111;
+      padding: 0 14px; display: flex; align-items: center; gap: 14px;
+    }
+    .chev {
+      width: 13px; height: 13px;
+      border-left: 3px solid #111; border-top: 3px solid #111;
+      transform: rotate(45deg) translate(3px, 3px);
+      transition: transform .3s;
+    }
+    .gallery:not(.open) .chev { transform: rotate(225deg) translate(3px, 3px); }
+    .gallery-body { overflow: hidden; transition: max-height .45s ease; }
+    .gallery:not(.open) .gallery-body { max-height: 0 !important; }
+    .gallery:not(.open) { min-height: 40px; }
+    .screens { display: grid; grid-template-columns: repeat(5, 1fr); gap: 26px; padding: 56px 46px 46px; align-items: start; }
+    .screen {
+      border-radius: 12px; overflow: hidden; background: #ece6f5; cursor: zoom-in;
+      box-shadow: 0 4px 14px rgba(0,0,0,.1);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .screen:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,.18); }
+    .screen img { width: 100%; height: auto; }   /* whole screen shown, nothing cropped */
+
+    /* ---------- Lightbox ---------- */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: none; align-items: center; justify-content: center; z-index: 100; padding: 30px; }
+    .lightbox.show { display: flex; }
+    .lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 10px; }
+    .lightbox .close { position: absolute; top: 20px; right: 28px; background: none; border: none; color: #fff; font-size: 44px; cursor: pointer; line-height: 1; }
+
+    /* ---------- Footer ---------- */
+    footer { background: #000; color: #fff; padding: 16px 60px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+    footer .copy { font-size: 18px; }
+    footer .f-logo img { height: 100px; }
+    footer .social { display: flex; align-items: center; justify-content: flex-end; gap: 23px; }
+    footer .social span { font-size: 18px; font-weight: 500; margin-right: -8px; }
+    footer .social img { width: 50px; height: 50px; border-radius: 6px; transition: transform .25s; }
+    footer .social a:hover img { transform: translateY(-4px); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1100px) {
+      .nav-links a { padding: 14px 24px; font-size: 18px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-img { max-width: 520px; margin: 0 auto; width: 100%; }
+      .ov-row { grid-template-columns: 1fr; }
+      .players { gap: 24px; }
+      .challenges { grid-template-columns: 1fr; gap: 22px; max-width: 560px; }
+      .soft-box { padding: 56px 30px 60px; }
+      .typo { grid-template-columns: 1fr; padding: 0; }
+      .screens { grid-template-columns: repeat(3, 1fr); padding: 50px 26px 30px; }
+      .sw { width: 130px; }
+    }
+    @media (max-width: 720px) {
+      .nav-wrap { padding: 20px 16px 0; }
+      .navbar { height: auto; padding: 14px 16px; flex-direction: column; gap: 12px; border-radius: 30px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; gap: 4px; }
+      .nav-links a { padding: 10px 18px; font-size: 16px; }
+      main { padding: 0 16px 60px; }
+      .page-title { gap: 10px; margin-top: 44px; }
+      .page-title h1 { font-size: 32px; }
+      .overview { padding: 28px 22px; }
+      .sec-title { font-size: 30px; }
+      .sec-sub { font-size: 16px; }
+      section.block { margin-top: 80px; }
+      .players { grid-template-columns: 1fr; max-width: 360px; }
+      .comp { grid-template-columns: repeat(4, minmax(150px, 1fr)); overflow-x: auto; padding-bottom: 8px; }
+      .comp .cell { font-size: 14px; }
+      .systems { grid-template-columns: 1fr; gap: 24px; }
+      .wires { grid-template-columns: 1fr; gap: 30px; max-width: 280px; }
+      .arrow { display: none; }
+      .typo .fname { font-size: 64px; }
+      .typo .chars { font-size: 20px; }
+      .aa .A { font-size: 140px; } .aa .a { font-size: 112px; }
+      .weights { gap: 16px; font-size: 15px; }
+      .swatches { flex-wrap: wrap; gap: 10px; margin-top: -80px; padding: 0; }
+      .sw { width: 30%; border-width: 6px; }
+      .ds-box { padding-bottom: 110px; }
+      .screens { grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 44px 14px 18px; }
+      .gallery-head { font-size: 22px; }
+      footer { grid-template-columns: 1fr; gap: 22px; text-align: center; padding: 20px 20px; }
+      footer .f-logo img { margin: 0 auto; }
+      footer .social { justify-content: center; flex-wrap: wrap; gap: 14px; }
+    }
+  
+    /* ===== Word Meadows additions ===== */
+    .page-title.simple h1 { font-size: 52px; }
+    .typo .fname, .typo .chars, .aa .A, .aa .a { font-family: 'Arial Rounded MT Bold', 'Nunito', sans-serif; font-weight: 800; }
+    .typo .fname { font-size: 50px; white-space: nowrap; }
+    .typo .chars { color: #8a8a8a; font-weight: 700; }
+
+    /* Assets board */
+    .assets-board {
+      border: 10px solid var(--soft); border-top: none; border-radius: 0 0 36px 36px;
+      margin-top: -100px; padding: 150px 50px 50px;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 34px 30px; align-items: center;
+    }
+    .asset { background: var(--soft); border-radius: 18px; padding: 22px 22px 0; text-align: center; position: relative; margin-bottom: 18px; }
+    .asset .ai { height: 120px; display: flex; align-items: center; justify-content: center; cursor: zoom-in; }
+    .asset .ai img { max-height: 100%; max-width: 100%; object-fit: contain; }
+    .pill {
+      display: inline-block; background: #fff; border: 1.5px solid #B9773F; color: #7A3E10;
+      border-radius: 30px; padding: 6px 30px; font-weight: 600; font-size: 17px;
+      transform: translateY(50%);
+    }
+    .a-coins { grid-column: 2 / 4; } .a-gift { grid-column: 4 / 6; }
+    .a-coll { grid-column: 1 / 3; } .a-center { grid-column: 3 / 5; text-align: center; } .a-icons { grid-column: 5 / 7; }
+    .a-feat { grid-column: 2 / 4; } .a-btn { grid-column: 4 / 6; }
+    .a-other { grid-column: 1 / -1; max-width: 900px; margin: 0 auto 18px; width: 100%; }
+    .a-other .ai { height: 150px; }
+    .a-center .ai { height: 190px; display: flex; justify-content: center; }
+    .a-center h5 { color: #7A3E10; font-size: 26px; font-weight: 600; margin-top: 4px; }
+
+    /* Onboarding */
+    .onb-box { background: var(--soft); margin-top: 46px; padding: 30px; border-radius: 24px; }
+    .onboard { display: grid; grid-template-columns: repeat(4, 1fr) 1.15fr; gap: 14px; align-items: stretch; }
+    .onboard .phone { align-self: center; }
+    /* phone screen: whole screen shown, nothing cropped */
+    .phone { position: relative; z-index: 1; border-radius: 14px; overflow: hidden; background: #1d2a33; cursor: zoom-in; box-shadow: 0 6px 16px rgba(0,0,0,.12); align-self: start; }
+    .phone img { width: 100%; height: auto; }
+    .onb-card { background: #BF7710; color: #fff; border-radius: 16px; padding: 30px 22px; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: center; }
+    .onb-card .coin { position: absolute; top: -26px; left: -14px; width: 74px; }
+    .onb-card .coin[src=""] { display: none; }   /* hidden until you add the coin image */
+    .onb-card h4 { font-size: 26px; font-weight: 600; line-height: 1.15; margin-bottom: 18px; }
+    .onb-card p { font-size: 16px; line-height: 1.6; }
+
+    /* Callout cards with lotus */
+    .callout {
+      position: relative; border-radius: 26px; padding: 4px;
+      background: linear-gradient(90deg, #FF6FD8, #FF8A5B);
+    }
+    .callout > div { background: #FFE8C9; border-radius: 22px; padding: 26px 26px; text-align: center; font-size: 17px; line-height: 1.6; color: #3a1f0a; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+    .callout h4 { color: #7A3E10; font-size: 28px; font-weight: 500; margin-bottom: 14px; }
+    .lotus { position: absolute; z-index: 1; width: 70px; top: -30px; left: -14px; }
+    .lotus.r { left: auto; right: -10px; }   /* lotus on the top-right corner */
+
+    /* Homepage with callouts around it and curved arrows */
+    .homepage { position: relative; max-width: 1050px; margin: 80px auto 0; }
+    .homepage .phone-wrap { width: 24%; margin: 0 auto; }
+    .homepage .callout { position: absolute; width: 32%; }
+    .homepage .callout.l { left: 0; }
+    .homepage .callout.r { right: 0; }
+    .homepage .callout > div { padding: 22px 26px; font-size: 16px; }
+    /* callout positions (top = how far down the screenshot) */
+    .homepage .l1 { top: 6%; }  .homepage .l2 { top: 42%; }
+    .homepage .r1 { top: 16%; } .homepage .r2 { top: 66%; }
+    .cap { text-align: center; color: #7A3E10; font-size: 26px; font-weight: 500; margin-top: 16px; }
+
+    /* Curved dashed arrow */
+    .curve { position: absolute; top: -50px; width: 150px; height: 60px; overflow: visible; }
+    .curve path { fill: none; stroke: #9C5520; stroke-width: 2; stroke-dasharray: 5 4; stroke-linecap: round; }
+    .callout.l .curve { left: 72%; }
+    .callout.r .curve { right: 72%; transform: scaleX(-1); }   /* mirror for right-side callouts */
+
+    /* Two-up feature cards */
+    .two-up { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 50px; }
+    .fcard { background: var(--soft); border-radius: 24px; padding: 30px; display: grid; grid-template-columns: 0.85fr 1fr; gap: 26px; align-items: start; }
+    .fcard.light { background: var(--soft-2); border: 1.5px solid #F6D2B8; }
+    .fcard h4 { color: #5A2A0A; font-size: 30px; font-weight: 500; margin-bottom: 20px; }
+    .fcard p.desc { font-size: 15px; line-height: 1.6; color: #5A2A0A; text-align: center; margin-top: 22px; }
+    .fcard p.desc.more { margin-top: 40px; }
+    .key { display: flex; flex-direction: column; gap: 14px; }
+    .key div { display: flex; align-items: center; gap: 18px; font-size: 15px; color: #5A2A0A; line-height: 1.4; }
+    .key span { width: 52px; height: 52px; border-radius: 9px; flex-shrink: 0; box-shadow: 0 3px 6px rgba(0,0,0,.08); }
+    .k-empty { background: #FFF7F2; }
+    .k-filled { background: linear-gradient(180deg, #3DA30E, #9BE53A); }
+    .k-pink { background: #FBA6D3; border: 2px solid #fff; }
+    .k-claimed { background: #F8B521; position: relative; }
+    .k-claimed::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #2E9E1E; font-weight: 800; font-size: 24px; }
+    .k-current { background: radial-gradient(circle, #FF9EC5, #F2547A); }
+    .k-upcoming { background: radial-gradient(circle, #FFE3C4, #FBC594); }
+    .steps-txt { text-align: center; color: #5A2A0A; font-size: 15px; line-height: 1.5; }
+    .steps-txt p { margin: 10px 0; }
+    .steps-txt .ladybug { width: 46px; margin: 6px auto; display: block; }
+    .boxes { display: flex; gap: 6px; justify-content: center; margin-top: 30px; }
+    .boxes span { width: 36px; height: 36px; border: 2.5px solid #4DAA1A; border-radius: 5px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .boxes span.on { background: linear-gradient(180deg, #3DA30E, #9BE53A); }
+    .quest-list { font-size: 15px; color: #5A2A0A; line-height: 1.55; }
+    .quest-list p { margin: 24px 0 18px; }
+    .quest-list ul { padding-left: 18px; }
+    .quest-list li { margin-bottom: 18px; }
+
+    /* Three-across rows: phone / callout / phone etc. */
+    .trio { display: grid; grid-template-columns: 0.62fr 1.4fr 0.62fr; gap: 70px; align-items: center; margin-top: 60px; }
+    .quad { display: grid; grid-template-columns: 1fr 0.75fr 0.75fr 1fr; gap: 26px; align-items: center; margin-top: 60px; }
+    .tiles-title { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 16px; }
+    .tiles-title .row { display: flex; gap: 5px; }
+    .tiles-title .row span { width: 34px; height: 34px; background: #F05A8E; color: #fff; font-weight: 700; font-size: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 2px #fff, 0 0 0 1.5px #F05A8E; }
+    .tiles-title .row span.gap { background: none; box-shadow: none; width: 14px; }
+
+    .trio + .gallery { margin-top: 90px; }
+
+    /* Chapters */
+    .chap-sub { text-align: center; font-size: 18px; line-height: 1.6; color: #222; max-width: 820px; margin: 56px auto 0; padding: 0 20px; }
+    .chapters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; padding: 36px 36px 36px; }
+    .chapter { background: var(--soft-2); border-radius: 14px; padding: 20px 20px 14px; }
+    .chapter:nth-child(even) { background: var(--soft); }
+    .chapter .imgs { display: grid; grid-template-columns: 3fr 1fr; gap: 10px; }
+    .chapter .main { border-radius: 8px; overflow: hidden; aspect-ratio: 0.56 / 1; background: #ddd; cursor: zoom-in; }
+    .chapter .thumbs { display: flex; flex-direction: column; gap: 10px; }
+    .chapter .thumbs div { flex: 1; border-radius: 6px; overflow: hidden; background: #ddd; cursor: zoom-in; }
+    .chapter img { width: 100%; height: 100%; object-fit: cover; }   /* chapter thumbnails are cropped to line up */
+    .chapter h5 { text-align: center; color: #7A3E10; font-size: 17px; font-weight: 600; margin-top: 12px; }
+
+    @media (max-width: 1100px) {
+      .assets-board { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 130px 24px 30px; }
+      .assets-board > * { grid-column: auto !important; }
+      .a-center, .a-other { grid-column: 1 / -1 !important; }
+      .onboard { grid-template-columns: repeat(2, 1fr); }
+      .onb-card { grid-column: 1 / -1; }
+      /* callouts go under the screen in two columns, arrows hidden */
+      .homepage { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 20px; }
+      .homepage .phone-wrap { grid-column: 1 / -1; width: 100%; max-width: 300px; margin-bottom: 10px; }
+      .homepage .callout { position: static; width: auto; }
+      .curve { display: none; }
+      .two-up { grid-template-columns: 1fr; }
+      .trio, .quad { grid-template-columns: 1fr 1fr; gap: 26px; }
+      .trio .callout, .quad .callout { grid-column: 1 / -1; }
+      .chapters { grid-template-columns: 1fr 1fr; padding: 30px 18px; }
+    }
+    @media (max-width: 720px) {
+      .page-title.simple h1 { font-size: 34px; }
+      .typo .fname { font-size: 30px; white-space: normal; }
+      .fcard { grid-template-columns: 1fr; }
+      .chapters { grid-template-columns: 1fr; }
+      .callout h4 { font-size: 22px; }
+      .homepage { grid-template-columns: 1fr; }
+      .assets-board { grid-template-columns: minmax(0, 1fr); padding: 110px 14px 24px; border-width: 6px; }
+      .pill { padding: 6px 20px; font-size: 15px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ===== Header / Navigation ===== -->
+  <header class="nav-wrap">
+    <nav class="navbar">
+      <a href="index.html" class="logo"><img src="Image/Common/Logo.png" alt="MN logo"></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="game-design.html" class="active" aria-current="page">Projects</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero & overview ===== -->
+    <div class="page-title simple"><h1>Word <span>Meadows</span></h1></div>
+
+    <div class="hero">
+      <div class="hero-img zoom"><img src="Image/Word Meadows/1.png" alt="Word Meadows"></div>
+      <div class="overview">
+        <h2>Product Overview</h2>
+        <p>A relaxing crossword game focused on solving word puzzles, expanding vocabulary, and enjoying a calm, engaging gameplay experience.</p>
+        <div class="ov-row">
+          <fieldset class="fieldset">
+            <legend>Tools</legend>
+            <div class="tools"><img src="Image/Common/Photoshop.png" alt="Photoshop"><img src="Image/Common/Figma.png" alt="Figma"></div>
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend>Role</legend>
+            <div class="val">UI DESIGNER | GRAPHIC DESIGNER</div>
+          </fieldset>
+        </div>
+        <fieldset class="fieldset">
+          <legend>Focus</legend>
+          <div class="val">Player Flow | Core Gameplay | Game State | Interactive Design</div>
+        </fieldset>
+      </div>
+    </div>
+
+    <!-- ===== Building the gameplay (wireframes) ===== -->
+    <section class="block">
+      <h2 class="sec-title">Building the <span>Gameplay</span></h2>
+      <p class="sec-sub w-720">The gameplay evolves from hand-drawn paper wireframes to digital low-fidelity layouts and a polished crossword interface, refining the user experience at every stage.</p>
+      <div class="wires">
+        <div class="wire"><div class="shot zoom"><img src="Image/Word Meadows/2.png" alt="Paper wireframe"></div><span>Paper wireframe</span></div>
+        <div class="arrow"></div>
+        <div class="wire"><div class="shot zoom"><img src="Image/Word Meadows/3.png" alt="Lo-fi wireframe"></div><span>Lo-fi wireframe</span></div>
+        <div class="arrow"></div>
+        <div class="wire"><div class="shot zoom"><img src="Image/Word Meadows/4.png" alt="Hi-fi wireframe"></div><span>Hi-fi wireframe</span></div>
+      </div>
+    </section>
+
+    <!-- ===== Design System + Assets ===== -->
+    <section class="block">
+      <div class="soft-box ds-box">
+        <h2 class="sec-title">Design <span>System</span></h2>
+        <p class="sec-sub">Establishing a consistent visual language through typography, colors, and reusable components to ensure clarity, accessibility, and a cohesive gameplay experience.</p>
+        <div class="typo">
+          <div>
+            <h5>Typography</h5>
+            <div class="fname">Arial Rounded MT Bold</div>
+            <div class="chars">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>1234567890</div>
+          </div>
+          <div class="aa-wrap">
+            <div class="aa"><span class="A">A</span><span class="a">a</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span></div>
+
+      <div class="assets-board">
+        <div class="asset a-coins">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/5.png" alt="Coins">
+          </div>
+          <span class="pill">Coins</span>
+        </div>
+        <div class="asset a-gift">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/6.png" alt="Gift">
+          </div>
+          <span class="pill">Gift</span>
+        </div>
+        <div class="asset a-coll">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/7.png" alt="Collectible">
+          </div>
+          <span class="pill">Collectible</span>
+        </div>
+        <div class="a-center">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/8.png" alt="Lotus">
+          </div>
+          <h5>Assets</h5>
+        </div>
+        <div class="asset a-icons">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/9.png" alt="UI Icon Set">
+          </div>
+          <span class="pill">UI Icon Set</span>
+        </div>
+        <div class="asset a-feat">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/10.png" alt="Feature Icons">
+          </div>
+          <span class="pill">Feature Icons</span>
+        </div>
+        <div class="asset a-btn">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/11.png" alt="Buttons">
+          </div>
+          <span class="pill">Button</span>
+        </div>
+        <div class="asset a-other">
+          <div class="ai zoom">
+            <img src="Image/Word Meadows/12.png" alt="Other assets">
+          </div>
+          <span class="pill">Other Assets</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== UI Design ===== -->
+    <section class="block">
+      <h2 class="sec-title">UI <span>Design</span></h2>
+      <p class="sec-sub">A collection of the main game interfaces, showcasing onboarding, the home screen, level progression, word puzzles, rewards, settings, and in-game interactions.</p>
+
+      <!-- Onboarding -->
+      <div class="onb-box">
+        <div class="onboard">
+          <div class="phone zoom"><img src="Image/Word Meadows/13.png" alt="Onboarding 1"></div>
+          <div class="phone zoom"><img src="Image/Word Meadows/14.png" alt="Onboarding 2"></div>
+          <div class="phone zoom"><img src="Image/Word Meadows/15.png" alt="Onboarding 3"></div>
+          <div class="phone zoom"><img src="Image/Word Meadows/16.png" alt="Onboarding 4"></div>
+          <div class="onb-card">
+            <img class="coin" src="" alt="">
+            <h4>Onboarding<br>Screen</h4>
+            <p>During onboarding, users are welcomed with a beautiful, serene screen accompanied by peaceful sounds, creating a calming first impression. They also receive a welcome bonus to begin their journey.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Homepage -->
+      <div class="homepage">
+        <div class="phone-wrap">
+          <div class="phone zoom"><img src="Image/Word Meadows/17.png" alt="Homepage"></div>
+          <div class="cap">Homepage</div>
+        </div>
+
+        <!-- left side -->
+        <div class="callout l l1"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>The top header contains the menu and currency.</div>
+          <svg class="curve" viewBox="0 0 150 60" aria-hidden="true"><path d="M4 56 C 8 14, 60 0, 90 24 S 130 42, 146 32"/><path d="M139 29 L146 32 L141 38"/></svg>
+        </div>
+        <div class="callout l l2"><img class="lotus r" src="Image/Word Meadows/86.png" alt=""><div>Other engagement features for users, such as the collectible event, word rush, leaderboard and more.</div>
+          <svg class="curve" viewBox="0 0 150 60" aria-hidden="true"><path d="M4 56 C 8 14, 60 0, 90 24 S 130 42, 146 32"/><path d="M139 29 L146 32 L141 38"/></svg>
+        </div>
+
+        <!-- right side -->
+        <div class="callout r r1"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>Each chapter name comes with a lotus, which represents growth and transformation — rising above challenges.</div>
+          <svg class="curve" viewBox="0 0 150 60" aria-hidden="true"><path d="M4 56 C 8 14, 60 0, 90 24 S 130 42, 146 32"/><path d="M139 29 L146 32 L141 38"/></svg>
+        </div>
+        <div class="callout r r2"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>The Level button is placed here for an easy, accessible tap.</div>
+          <svg class="curve" viewBox="0 0 150 60" aria-hidden="true"><path d="M4 56 C 8 14, 60 0, 90 24 S 130 42, 146 32"/><path d="M139 29 L146 32 L141 38"/></svg>
+        </div>
+      </div>
+
+      <!-- Puzzle screen + Bonus word -->
+      <div class="two-up">
+        <div class="fcard">
+          <div class="phone zoom"><img src="Image/Word Meadows/18.png" alt="Puzzle screen"></div>
+          <div>
+            <h4>Puzzle Screen</h4>
+            <div class="key">
+              <div><span class="k-empty"></span>Empty block</div>
+              <div><span class="k-filled"></span>Filled block</div>
+              <div><span class="k-pink"></span>This letter is part of the Word of the Puzzle</div>
+            </div>
+            <p class="desc">The puzzle screen combines puzzle-solving, quests, bonus word collection, and hints to keep users engaged. Players can earn rewards by finding extra words and use the dictionary to explore word meanings and the puzzle’s featured word.</p>
+          </div>
+        </div>
+        <div class="fcard light">
+          <div class="phone zoom"><img src="Image/Word Meadows/19.png" alt="Bonus word"></div>
+          <div>
+            <h4>Bonus Word</h4>
+            <div class="steps-txt">
+              <p>Collect 10 bonus words outside the main puzzle.</p>
+              <img class="ladybug" src="Image/Word Meadows/88.png" alt="">
+              <p>Unlock the Ladybug Power-Up.</p>
+              <p>The ladybug lands on a random block and reveals its letter.</p>
+            </div>
+            <div class="boxes"><span></span><span></span><span></span><span class="on">🐞</span><span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Word of the puzzle -->
+      <div class="trio">
+        <div class="phone zoom"><img src="Image/Word Meadows/20.png" alt="Dictionary"></div>
+        <div class="callout"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>
+          <div class="tiles-title">
+            <div class="row"><span>W</span><span>O</span><span>R</span><span>D</span><span class="gap"></span><span>O</span><span>F</span></div>
+            <div class="row"><span>T</span><span>H</span><span>E</span><span class="gap"></span><span>P</span><span>U</span><span>Z</span><span>Z</span><span>L</span><span>E</span></div>
+          </div>
+          The feature helps users learn new words by collecting letters while solving each puzzle. Every puzzle introduces a new word, while a puzzle streak motivates users to keep playing in one session and earn rewards at each milestone.
+        </div></div>
+        <div class="phone zoom"><img src="Image/Word Meadows/21.png" alt="Word of the puzzle"></div>
+      </div>
+
+      <!-- Outro -->
+      <div class="quad">
+        <div class="callout"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>In the outro, the lotus earned during the puzzle is added to the Growth Lotus, and the user receives a reward for completing the puzzle. The button displays the puzzle streak, motivating users to play consistently and maintain their streak.</div></div>
+        <div class="phone zoom"><img src="Image/Word Meadows/22.png" alt="Outro"></div>
+        <div class="phone zoom"><img src="Image/Word Meadows/23.png" alt="Chapter quote"></div>
+        <div class="callout"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>The journey features 9 chapters, each with subchapters, unique backgrounds reflecting their themes, and beautiful, inspiring quotes.</div></div>
+      </div>
+      <div class="cap">Outro</div>
+
+      <!-- Word Rush + Quest Center -->
+      <div class="two-up">
+        <div class="fcard">
+          <div class="phone zoom"><img src="Image/Word Meadows/24.png" alt="Word Rush"></div>
+          <div>
+            <h4>Word Rush</h4>
+            <div class="key">
+              <div><span class="k-claimed"></span>Claimed</div>
+              <div><span class="k-current"></span>Current one with progress</div>
+              <div><span class="k-upcoming"></span>Upcoming</div>
+            </div>
+            <p class="desc more">Word Rush rewards users with exciting bonuses for finding words and continuing to play.</p>
+          </div>
+        </div>
+        <div class="fcard light">
+          <div class="phone zoom"><img src="Image/Word Meadows/25.png" alt="Quest Center"></div>
+          <div>
+            <h4>Quest Center</h4>
+            <div class="quest-list">
+              <p>The Quest feature has two sections:</p>
+              <ul>
+                <li>Daily Puzzle: Includes 7 tasks linked to monthly milestones—1 fixed task and 2 tasks repeated 3 times each. Users must complete at least 1 daily task to make monthly progress.</li>
+                <li>Achievements: Contains ongoing tasks that users can complete to earn rewards.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="quad">
+        <div class="callout"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>The Leaderboard showcases top players based on their weekly scores, highlighting the top three players and their rankings. Users can track their position, compare scores, and stay motivated to play more and climb the leaderboard.</div></div>
+        <div class="phone zoom"><img src="Image/Word Meadows/26.png" alt="Leaderboard"></div>
+        <div class="phone zoom"><img src="Image/Word Meadows/27.png" alt="Mini leaderboard"></div>
+        <div class="callout"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>The mini leaderboard appears on the puzzle outro, showcasing the top 4 players and their weekly scores. It gives users a quick performance comparison and motivates them to improve their ranking by playing more puzzles.</div></div>
+      </div>
+      <div class="cap">Leaderboard</div>
+
+      <!-- Collectible event -->
+      <div class="trio">
+        <div class="phone zoom"><img src="Image/Word Meadows/29.png" alt="Collectible event puzzle"></div>
+        <div class="callout"><img class="lotus" src="Image/Word Meadows/86.png" alt=""><div>
+          <h4>Collectible Event</h4>
+          The Collectible Event allows users to collect special items placed on specific letters in the puzzle. When users complete a word containing a collectible, they automatically collect that item and progress toward milestone rewards.
+        </div></div>
+        <div class="phone zoom"><img src="Image/Word Meadows/30.png" alt="Collectible event"></div>
+      </div>
+
+      <!-- Chapters -->
+      <div class="gallery open">
+        <button class="gallery-head" type="button" aria-expanded="true">Chapters <span class="chev"></span></button>
+        <div class="gallery-body">
+          <p class="chap-sub">A collection of beautifully themed chapter backgrounds, each featuring unique subchapters inspired by nature, landscapes, and peaceful moments, with distinct visuals for every chapter and subchapter.</p>
+          <div class="chapters">
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/31.png" alt="The Poetry of Water" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/32.png" alt="The Poetry of Water subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/33.png" alt="The Poetry of Water subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/34.png" alt="The Poetry of Water subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>The Poetry of Water</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/35.png" alt="Earth’s Landscapes" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/36.png" alt="Earth’s Landscapes subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/37.png" alt="Earth’s Landscapes subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/38.png" alt="Earth’s Landscapes subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Earth’s Landscapes</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/39.png" alt="Flora – Nature’s Artistry" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/40.png" alt="Flora – Nature’s Artistry subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/41.png" alt="Flora – Nature’s Artistry subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/42.png" alt="Flora – Nature’s Artistry subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Flora – Nature’s Artistry</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/43.png" alt="Fauna – Grace in Motion" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/44.png" alt="Fauna – Grace in Motion subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/45.png" alt="Fauna – Grace in Motion subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/46.png" alt="Fauna – Grace in Motion subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Fauna – Grace in Motion</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/47.png" alt="Ecosystems – Nature’s Tapestry" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/48.png" alt="Ecosystems – Nature’s Tapestry subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/49.png" alt="Ecosystems – Nature’s Tapestry subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/50.png" alt="Ecosystems – Nature’s Tapestry subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Ecosystems – Nature’s Tapestry</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/51.png" alt="Nature’s Aesthetic Wonders" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/52.png" alt="Nature’s Aesthetic Wonders subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/53.png" alt="Nature’s Aesthetic Wonders subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/54.png" alt="Nature’s Aesthetic Wonders subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Nature’s Aesthetic Wonders</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/55.png" alt="Conservation – Protecting Beauty" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/56.png" alt="Conservation – Protecting Beauty subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/57.png" alt="Conservation – Protecting Beauty subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/58.png" alt="Conservation – Protecting Beauty subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Conservation – Protecting Beauty</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/59.png" alt="Experiencing Nature’s Gifts" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/60.png" alt="Experiencing Nature’s Gifts subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/61.png" alt="Experiencing Nature’s Gifts subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/62.png" alt="Experiencing Nature’s Gifts subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>Experiencing Nature’s Gifts</h5>
+            </div>
+            <div class="chapter">
+              <div class="imgs">
+                <div class="main">
+                  <img src="Image/Word Meadows/63.png" alt="The Timelessness of Nature" loading="lazy">
+                </div>
+                <div class="thumbs">
+                  <div>
+                    <img src="Image/Word Meadows/64.png" alt="The Timelessness of Nature subchapter 1" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/65.png" alt="The Timelessness of Nature subchapter 2" loading="lazy">
+                  </div>
+                  <div>
+                    <img src="Image/Word Meadows/66.png" alt="The Timelessness of Nature subchapter 3" loading="lazy">
+                  </div>
+                </div>
+              </div>
+              <h5>The Timelessness of Nature</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery open">
+        <button class="gallery-head" type="button" aria-expanded="true">FTUE <span class="chev"></span></button>
+        <div class="gallery-body">
+          <div class="screens">
+            <div class="screen"><img src="Image/Word Meadows/67.png" alt="FTUE 1" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/68.png" alt="FTUE 2" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/69.png" alt="FTUE 3" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/70.png" alt="FTUE 4" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/71.png" alt="FTUE 5" loading="lazy"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery open">
+        <button class="gallery-head" type="button" aria-expanded="true">Pop-up <span class="chev"></span></button>
+        <div class="gallery-body">
+          <div class="screens">
+            <div class="screen"><img src="Image/Word Meadows/72.png" alt="Pop-up 1" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/73.png" alt="Pop-up 2" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/74.png" alt="Pop-up 3" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/75.png" alt="Pop-up 4" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/76.png" alt="Pop-up 5" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/77.png" alt="Pop-up 6" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/78.png" alt="Pop-up 7" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/79.png" alt="Pop-up 8" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/80.png" alt="Pop-up 9" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/81.png" alt="Pop-up 10" loading="lazy"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery open">
+        <button class="gallery-head" type="button" aria-expanded="true">Monetization <span class="chev"></span></button>
+        <div class="gallery-body">
+          <div class="screens">
+            <div class="screen"><img src="Image/Word Meadows/82.png" alt="Monetization 1" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/83.png" alt="Monetization 2" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/84.png" alt="Monetization 3" loading="lazy"></div>
+            <div class="screen"><img src="Image/Word Meadows/85.png" alt="Monetization 4" loading="lazy"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="copy">© 2026 By Mariyam Nesha</div>
+    <a href="index.html" class="f-logo"><img src="Image/Common/Logo.png" alt="MN logo"></a>
+    <div class="social">
+      <span>Follow :</span>
+      <a href="https://www.behance.net/mariyamnesha3" target="_blank" rel="noopener" aria-label="Behance"><img src="Image/Common/Behance.png" alt="Behance"></a>
+      <a href="https://dribbble.com/mary333333333" target="_blank" rel="noopener" aria-label="Dribbble"><img src="Image/Common/Dribbble.png" alt="Dribbble"></a>
+      <a href="mailto:mariyamnesha3@gmail.com" aria-label="Gmail"><img src="Image/Common/Gmail.png" alt="Gmail"></a>
+      <a href="https://www.linkedin.com/in/mariyam-nesha-05b04a190/" target="_blank" rel="noopener" aria-label="LinkedIn"><img src="Image/Common/LinkedIn.png" alt="LinkedIn"></a>
+    </div>
+  </footer>
+
+  <!-- ===== Lightbox (click an image to enlarge) ===== -->
+  <div class="lightbox" id="lightbox">
+    <button class="close" type="button" aria-label="Close">&times;</button>
+    <img alt="">
+  </div>
+
+  <script>
+    function fit() {
+      document.querySelectorAll('.gallery-body').forEach(function (b) { b.style.maxHeight = b.scrollHeight + 'px'; });
+    }
+    document.querySelectorAll('.gallery').forEach(function (g) {
+      var head = g.querySelector('.gallery-head');
+      head.addEventListener('click', function () {
+        fit();
+        var open = g.classList.toggle('open');
+        head.setAttribute('aria-expanded', open);
+      });
+    });
+    fit();
+    window.addEventListener('load', fit);
+    window.addEventListener('resize', fit);
+    /* lazy images can change the height after loading – re-measure each time one loads */
+    document.querySelectorAll('.gallery img').forEach(function (img) { img.addEventListener('load', fit); });
+
+    var lb = document.getElementById('lightbox');
+    var lbImg = lb.querySelector('img');
+    document.querySelectorAll('.zoom, .screen, .chapter .main, .chapter .thumbs div').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var img = el.querySelector('img');
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('show');
+      });
+    });
+    function closeLb() { lb.classList.remove('show'); }
+    lb.addEventListener('click', function (e) { if (e.target !== lbImg) closeLb(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
+  </script>
+</body>
+</html>
