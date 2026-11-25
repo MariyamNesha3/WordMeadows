@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MeowWords case study by Mariyam Nesha – cat-themed word-search game UI and game design.">
+  <title>MeowWords | Mariyam Nesha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+
+    :root {
+      --orange: #F47B20;
+      --brown: #7A3E10;
+      --soft: #FCE8DC;
+      --soft-2: #FDF2EA;
+      --label: #F9CDAE;
+      --dark: #161616;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #fff; color: #111; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+    img { display: block; max-width: 100%; }
+
+    /* ---------- Navbar ---------- */
+    .nav-wrap { padding: 40px 70px 0; }
+    .navbar {
+      max-width: 1300px; margin: 0 auto;
+      background: var(--dark); border-radius: 50px; height: 86px;
+      padding: 0 8px 0 34px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .navbar .logo img { height: 100px; }
+    .nav-links { display: flex; list-style: none; gap: 10px; }
+    .nav-links a {
+      display: block; color: #fff; font-size: 20px;
+      padding: 18px 40px; border-radius: 40px;
+      transition: background .25s, color .25s;
+    }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-links a.active { background: var(--orange); color: #fff; }
+
+    main { max-width: 1300px; margin: 0 auto; padding: 0 70px 100px; box-sizing: content-box; }
+
+    /* ---------- Section titles ---------- */
+    .sec-title { text-align: center; font-size: 40px; font-weight: 600; letter-spacing: -0.5px; }
+    .sec-title span { color: var(--orange); }
+    .sec-sub { text-align: center; font-size: 18px; line-height: 1.6; color: #333; max-width: 760px; margin: 18px auto 0; }
+    .sec-sub.w-720 { max-width: 720px; }
+    section.block { margin-top: 110px; position: relative; }
+    .soft-box { background: var(--soft); border-radius: 36px; padding: 70px 70px 80px; position: relative; }
+
+    /* ---------- Hero ---------- */
+    .page-title { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 70px 0 44px; }
+    .page-title h1 { font-size: 52px; font-weight: 600; letter-spacing: -0.5px; }
+    .page-title h1 span { color: var(--orange); }
+    .hero { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.58fr); gap: 48px; align-items: stretch; }
+    /* photo with see-through white frame */
+    .hero-img { position: relative; height: 100%; border-radius: 30px; overflow: hidden; background: #F1E6DD; box-shadow: 0 10px 30px rgba(0,0,0,.08); cursor: zoom-in; }
+    .hero-img img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-img::after { content: ""; position: absolute; inset: 0; border: 16px solid rgba(255,255,255,.35); border-radius: 30px; pointer-events: none; }
+    .overview { background: var(--soft); border-radius: 26px; padding: 44px 44px 40px; }
+    .overview h2 { color: var(--brown); font-size: 30px; font-weight: 600; margin-bottom: 14px; }
+    .overview > p { font-size: 18px; line-height: 1.6; color: #333; margin-bottom: 30px; }
+    .ov-row { display: grid; grid-template-columns: minmax(0,0.62fr) minmax(0,1fr); gap: 26px; margin-bottom: 26px; }
+    .fieldset { min-width: 0; border: 1.5px solid #E2C9B8; border-radius: 14px; padding: 0 22px 18px; position: relative; }
+    .fieldset legend { font-size: 22px; font-weight: 600; padding: 0 8px; margin-left: -8px; }
+    .fieldset .tools { display: flex; gap: 36px; padding: 8px 26px 0; }
+    .fieldset .tools img { width: 50px; height: 50px; border-radius: 10px; }
+    .fieldset .val { font-size: 17px; font-weight: 500; padding-top: 16px; line-height: 1.7; }
+
+    /* ---------- Mapping ---------- */
+    .map-img { background: var(--soft-2); border-radius: 24px; margin-top: 44px; padding: 26px; cursor: zoom-in; }
+    .map-img img { width: 100%; height: auto; margin: 0 auto; min-height: 200px; object-fit: contain; }
+
+    /* ---------- Wireframes ---------- */
+    .wires { display: grid; grid-template-columns: 1fr 70px 1fr 70px 1fr; align-items: center; max-width: 1000px; margin: 46px auto 0; }
+    .wire { text-align: center; }
+    /* whole wireframe shown as it is: no extra box, nothing cropped */
+    .wire .shot { cursor: zoom-in; }
+    .wire .shot img { width: 100%; height: auto; }
+    .wire span { display: block; font-size: 18px; margin-top: 18px; }
+    .arrow { height: 2px; background: #C0753E; position: relative; margin: 0 10px; top: -22px; }
+    .arrow::after { content: ""; position: absolute; right: -2px; top: -5px; width: 10px; height: 10px; border-right: 2px solid #C0753E; border-top: 2px solid #C0753E; transform: rotate(45deg); }
+
+    /* ---------- Design system ---------- */
+    .ds-box { padding-bottom: 150px; }
+    .typo { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; margin-top: 50px; padding: 0 60px; }
+    .typo h5 { font-size: 22px; font-weight: 500; }
+    .typo .fname { font-family: 'Kanit', sans-serif; font-size: 80px; font-weight: 500; line-height: 1.15; margin: 6px 0 14px; white-space: nowrap; }
+    .typo .chars { font-family: 'Kanit', sans-serif; font-weight: 300; font-size: 30px; line-height: 1.2; color: #8a8a8a; word-break: break-all; }
+    .aa-wrap { text-align: center; }
+    .aa {
+      display: inline-flex; align-items: flex-end; gap: 2px;
+      font-family: 'Kanit', sans-serif; line-height: .8;
+      padding: 18px 14px 10px; position: relative;
+      background-image:
+        repeating-linear-gradient(90deg, #999 0 8px, transparent 8px 16px),
+        repeating-linear-gradient(90deg, #999 0 8px, transparent 8px 16px),
+        repeating-linear-gradient(0deg, #999 0 8px, transparent 8px 16px),
+        repeating-linear-gradient(0deg, #999 0 8px, transparent 8px 16px);
+      background-size: 100% 1.5px, 100% 1.5px, 1.5px 100%, 1.5px 100%;
+      background-position: 0 6px, 0 calc(100% - 4px), 6px 0, calc(100% - 6px) 0;
+      background-repeat: no-repeat;
+    }
+    .aa .A { font-size: 220px; font-weight: 700; color: #7E4A1E; }
+    .aa .a { font-size: 175px; font-weight: 600; color: transparent; -webkit-text-stroke: 3px #7E4A1E; }
+    .weights { display: flex; justify-content: center; gap: 34px; margin-top: 18px; font-size: 18px; }
+    .weights span:nth-child(1) { font-weight: 400; }
+    .weights span:nth-child(2) { font-weight: 500; }
+    .weights span:nth-child(3) { font-weight: 600; }
+    .weights span:nth-child(4) { font-weight: 700; }
+    .swatches { display: flex; justify-content: center; gap: 18px; margin-top: -110px; position: relative; z-index: 2; padding: 0 40px; }
+    .sw {
+      width: 170px; aspect-ratio: 1; border: 10px solid #fff; border-radius: 6px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.12);
+      transition: transform .3s;
+    }
+    /* MeowWords colour palette */
+    .sw:nth-child(1) { background: #D3551A; transform: rotate(-14deg); }
+    .sw:nth-child(2) { background: #FFDEB9; transform: rotate(20deg) translateY(14px); }
+    .sw:nth-child(3) { background: linear-gradient(160deg, #3FD07F, #12A84A); transform: rotate(-8deg) translateY(6px); }
+    .sw:nth-child(4) { background: #86330B; transform: rotate(24deg) translateY(30px); }
+    .sw:nth-child(5) { background: #A5806E; transform: rotate(-16deg) translateY(14px); }
+    .sw:hover { transform: rotate(0) scale(1.05); }
+
+    /* ---------- Lightbox ---------- */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: none; align-items: center; justify-content: center; z-index: 100; padding: 30px; }
+    .lightbox.show { display: flex; }
+    .lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 10px; }
+    .lightbox .close { position: absolute; top: 20px; right: 28px; background: none; border: none; color: #fff; font-size: 44px; cursor: pointer; line-height: 1; }
+
+    /* ---------- Footer ---------- */
+    footer { background: #000; color: #fff; padding: 16px 60px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+    footer .copy { font-size: 18px; }
+    footer .f-logo img { height: 100px; }
+    footer .social { display: flex; align-items: center; justify-content: flex-end; gap: 23px; }
+    footer .social span { font-size: 18px; font-weight: 500; margin-right: -8px; }
+    footer .social img { width: 50px; height: 50px; border-radius: 6px; transition: transform .25s; }
+    footer .social a:hover img { transform: translateY(-4px); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1100px) {
+      .nav-links a { padding: 14px 24px; font-size: 18px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-img { max-width: 520px; margin: 0 auto; width: 100%; }
+      .ov-row { grid-template-columns: 1fr; }
+      .soft-box { padding: 56px 30px 60px; }
+      .typo { grid-template-columns: 1fr; padding: 0; }
+      .sw { width: 130px; }
+    }
+    @media (max-width: 720px) {
+      .nav-wrap { padding: 20px 16px 0; }
+      .navbar { height: auto; padding: 14px 16px; flex-direction: column; gap: 12px; border-radius: 30px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; gap: 4px; }
+      .nav-links a { padding: 10px 18px; font-size: 16px; }
+      main { padding: 0 16px 60px; }
+      .page-title { gap: 10px; margin-top: 44px; }
+      .page-title h1 { font-size: 32px; }
+      .overview { padding: 28px 22px; }
+      .sec-title { font-size: 30px; }
+      .sec-sub { font-size: 16px; }
+      section.block { margin-top: 80px; }
+      .wires { grid-template-columns: 1fr; gap: 30px; max-width: 280px; }
+      .arrow { display: none; }
+      .typo .fname { font-size: 56px; }
+      .typo .chars { font-size: 20px; }
+      .aa .A { font-size: 140px; } .aa .a { font-size: 112px; }
+      .weights { gap: 16px; font-size: 15px; }
+      .swatches { flex-wrap: wrap; gap: 10px; margin-top: -80px; padding: 0; }
+      .sw { width: 30%; border-width: 6px; }
+      .ds-box { padding-bottom: 110px; }
+      footer { grid-template-columns: 1fr; gap: 22px; text-align: center; padding: 20px 20px; }
+      footer .f-logo img { margin: 0 auto; }
+      footer .social { justify-content: center; flex-wrap: wrap; gap: 14px; }
+    }
+  
+    /* ===== MeowWords ===== */
+
+    /* Assets board */
+    .assets-board {
+      border: 10px solid var(--soft); border-top: none; border-radius: 0 0 36px 36px;
+      margin-top: -100px; padding: 150px 50px 50px;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 34px 30px; align-items: center;
+    }
+    .asset { background: var(--soft); border-radius: 18px; padding: 22px 22px 0; text-align: center; position: relative; margin-bottom: 18px; }
+    .asset .ai { height: 120px; display: flex; align-items: center; justify-content: center; cursor: zoom-in; }
+    .asset .ai img { max-height: 100%; max-width: 100%; object-fit: contain; }
+    .pill {
+      display: inline-block; background: #fff; border: 1.5px solid #B9773F; color: #7A3E10;
+      border-radius: 30px; padding: 6px 30px; font-weight: 600; font-size: 17px;
+      transform: translateY(50%);
+    }
+    .a-coins { grid-column: 2 / 4; } .a-gift { grid-column: 4 / 6; }
+    .a-btn { grid-column: 1 / 3; } .a-center { grid-column: 3 / 5; text-align: center; } .a-icons { grid-column: 5 / 7; }
+    .a-other { grid-column: 1 / -1; max-width: 900px; margin: 0 auto 18px; width: 100%; }
+    .a-other .ai { height: 150px; }
+    .a-center .ai { height: 190px; display: flex; justify-content: center; cursor: zoom-in; }
+    .a-center .ai img { max-height: 100%; object-fit: contain; }
+    .a-center h5 { color: #7A3E10; font-size: 26px; font-weight: 600; margin-top: 4px; }
+
+    /* Phone screen: whole screen shown, nothing cropped */
+    .phone { border-radius: 14px; overflow: hidden; background: #1d2a33; cursor: zoom-in; box-shadow: 0 6px 16px rgba(0,0,0,.12); border: 2px solid #22303b; border-bottom-width: 5px; }
+    .phone img { width: 100%; height: auto; }
+    .cap { text-align: center; color: #7A3E10; font-size: 26px; font-weight: 500; margin-top: 16px; }
+
+    /* Onboarding: 3 screens + card */
+    .onb-box { background: var(--soft); margin-top: 46px; padding: 30px; border-radius: 24px; }
+    .onboard { display: grid; grid-template-columns: repeat(3, 1fr) 1.35fr; gap: 14px; align-items: center; }
+    .onb-card { background: #BF7710; color: #fff; border-radius: 16px; padding: 30px 22px; text-align: center; align-self: stretch; display: flex; flex-direction: column; justify-content: center; }
+    .onb-card h4 { font-size: 26px; font-weight: 600; line-height: 1.15; margin-bottom: 18px; }
+    .onb-card p { font-size: 16px; line-height: 1.6; }
+    .onb-card p + p { margin-top: 16px; }
+
+    /* Notes */
+    .note { background: var(--soft); border-radius: 26px; padding: 28px 30px; text-align: center; font-size: 16px; line-height: 1.65; color: #3a1f0a; }
+    .note h4 { color: #8C5200; font-size: 26px; font-weight: 600; line-height: 1.2; margin-bottom: 16px; }
+    .note h4.next { margin-top: 22px; }
+    .note.outline { background: #fff; border: 2px solid #3a1f0a; border-radius: 12px; font-size: 15px; padding: 22px 18px; }
+
+    /* screen | note | screen,  note | screen | screen | note,  note | 3 screens | note */
+    .mw-trio { display: grid; grid-template-columns: 0.6fr 1.3fr 0.6fr; gap: 70px; align-items: center; margin-top: 80px; }
+    .mw-quad { display: grid; grid-template-columns: 0.9fr 0.65fr 0.65fr 0.9fr; gap: 26px; align-items: center; margin-top: 80px; }
+    .mw-five { display: grid; grid-template-columns: 0.75fr 0.7fr 0.7fr 0.7fr 0.8fr; gap: 14px; align-items: center; margin-top: 80px; }
+
+    @media (max-width: 1100px) {
+      .assets-board { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 130px 24px 30px; }
+      .assets-board > * { grid-column: auto !important; }
+      .a-center, .a-other { grid-column: 1 / -1 !important; }
+      .onboard { grid-template-columns: repeat(3, 1fr); }
+      .onb-card { grid-column: 1 / -1; }
+      .mw-trio, .mw-quad { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .mw-trio .note, .mw-quad .note { grid-column: 1 / -1; }
+      .mw-trio .note { order: -1; }
+      .mw-five { grid-template-columns: repeat(3, 1fr); }
+      .mw-five .note { grid-column: 1 / -1; }
+      .typo .fname { font-size: 60px; }
+    }
+    @media (max-width: 720px) {
+      .assets-board { grid-template-columns: minmax(0, 1fr); padding: 110px 14px 24px; border-width: 6px; }
+      .pill { padding: 6px 20px; font-size: 15px; }
+      .onboard, .mw-five { grid-template-columns: 1fr 1fr; }
+      .typo .fname { font-size: 56px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ===== Header / Navigation ===== -->
+  <header class="nav-wrap">
+    <nav class="navbar">
+      <a href="index.html" class="logo"><img src="Image/Common/Logo.png" alt="MN logo"></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="game-design.html" class="active" aria-current="page">Projects</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero & overview ===== -->
+    <div class="page-title"><h1>MeowWords</h1></div>
+    <div class="hero">
+      <div class="hero-img zoom"><img src="Image/MeowWords/1.png" alt="MeowWords"></div>
+      <div class="overview">
+        <h2>Product Overview</h2>
+        <p>MeowWords is a playful word-search game that combines hidden-word puzzles with adorable cat characters, milestone rewards, and a scenic level journey.</p>
+        <div class="ov-row">
+          <fieldset class="fieldset">
+            <legend>Tools</legend>
+            <div class="tools"><img src="Image/Common/Photoshop.png" alt="Photoshop"><img src="Image/Common/Figma.png" alt="Figma"></div>
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend>Role</legend>
+            <div class="val">UI DESIGNER | GRAPHIC DESIGNER</div>
+          </fieldset>
+        </div>
+        <fieldset class="fieldset">
+          <legend>Focus</legend>
+          <div class="val">Player Flow | Core Gameplay | Game State | Interactive Design</div>
+        </fieldset>
+      </div>
+    </div>
+
+    <!-- ===== Building the gameplay (wireframes) ===== -->
+    <section class="block">
+      <h2 class="sec-title">Building the <span>Gameplay</span></h2>
+      <p class="sec-sub w-720">Every interaction is designed to make gameplay intuitive, encourage progression, and keep players coming back for more.</p>
+      <div class="wires">
+        <div class="wire"><div class="shot zoom"><img src="Image/MeowWords/2.png" alt="Paper wireframe"></div><span>Paper wireframe</span></div>
+        <div class="arrow"></div>
+        <div class="wire"><div class="shot zoom"><img src="Image/MeowWords/3.png" alt="Lo-fi wireframe"></div><span>Lo-fi wireframe</span></div>
+        <div class="arrow"></div>
+        <div class="wire"><div class="shot zoom"><img src="Image/MeowWords/4.png" alt="Hi-fi wireframe"></div><span>Hi-fi wireframe</span></div>
+      </div>
+    </section>
+
+    <!-- ===== Design system + assets ===== -->
+    <section class="block">
+      <div class="soft-box ds-box">
+        <h2 class="sec-title">Design <span>System</span></h2>
+        <p class="sec-sub">Establishing a consistent visual language through typography, colors, and reusable components to ensure clarity, accessibility, and a cohesive gameplay experience.</p>
+        <div class="typo">
+          <div>
+            <h5>Typography</h5>
+            <div class="fname">Kanit</div>
+            <div class="chars">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>1234567890</div>
+          </div>
+          <div class="aa-wrap">
+            <div class="aa"><span class="A">A</span><span class="a">a</span></div>
+            <div class="weights"><span>Regular</span><span>Medium</span><span>Semibold</span><span>Bold</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span></div>
+
+      <div class="assets-board">
+        <div class="asset a-coins">
+          <div class="ai zoom"><img src="Image/MeowWords/5.png" alt="Currency and lives"></div>
+          <span class="pill">Currency / Lives</span>
+        </div>
+        <div class="asset a-gift">
+          <div class="ai zoom"><img src="Image/MeowWords/6.png" alt="Gift"></div>
+          <span class="pill">Gift</span>
+        </div>
+        <div class="asset a-btn">
+          <div class="ai zoom"><img src="Image/MeowWords/7.png" alt="Buttons"></div>
+          <span class="pill">Button</span>
+        </div>
+        <div class="a-center">
+          <div class="ai zoom"><img src="Image/MeowWords/8.png" alt="Cat mascot"></div>
+          <h5>Assets</h5>
+        </div>
+        <div class="asset a-icons">
+          <div class="ai zoom"><img src="Image/MeowWords/9.png" alt="UI Icon Set"></div>
+          <span class="pill">UI Icon Set</span>
+        </div>
+        <div class="asset a-other">
+          <div class="ai zoom"><img src="Image/MeowWords/10.png" alt="Character-related art"></div>
+          <span class="pill">Character-Related Art</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== UI design ===== -->
+    <section class="block">
+      <h2 class="sec-title">UI <span>Design</span></h2>
+      <p class="sec-sub">A collection of the main game interfaces, showcasing onboarding, the home screen, level progression, word puzzles, rewards and more.</p>
+
+      <!-- Onboarding -->
+      <div class="onb-box">
+        <div class="onboard">
+          <div class="phone zoom"><img src="Image/MeowWords/11.png" alt="Splash screen"></div>
+          <div class="phone zoom"><img src="Image/MeowWords/12.png" alt="Level journey"></div>
+          <div class="phone zoom"><img src="Image/MeowWords/13.png" alt="Puzzle screen"></div>
+          <div class="onb-card">
+            <h4>Onboarding<br>Screen</h4>
+            <p>MeowWords welcomes players with a charming splash screen, leads them into a scenic level journey, and introduces the word-search gameplay through an interactive puzzle.</p>
+            <p>The puzzle screen captures the core MeowWords experience, challenging players to find hidden words using the given word list. The clear layout, highlighted discoveries, and handy hints make puzzles intuitive and rewarding, encouraging players to keep progressing.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special puzzle -->
+      <div class="mw-trio">
+        <div class="phone zoom"><img src="Image/MeowWords/14.png" alt="Special puzzle intro"></div>
+        <div class="note"><h4>Special Puzzle</h4>The special puzzle appears before players reach a milestone, adding a fun challenge to their journey. Players uncover hidden words beneath cat icons, collecting each cat as its word is found. Hints help reveal hidden letters, and collecting all the cats completes the level, rewarding players with a refreshing break from regular gameplay.</div>
+        <div class="phone zoom"><img src="Image/MeowWords/15.png" alt="Special puzzle"></div>
+      </div>
+
+      <!-- Outro -->
+      <div class="mw-quad">
+        <div class="note"><h4>Puzzle<br>Completion</h4>Celebrates players for finding hidden words and collecting curious cats, while showing their reward progress. The cheerful animation and milestone rewards create a sense of achievement, encouraging players to solve more puzzles and earn exciting rewards.</div>
+        <div class="phone zoom"><img src="Image/MeowWords/16.png" alt="Puzzle completion"></div>
+        <div class="phone zoom"><img src="Image/MeowWords/17.png" alt="Exit confirmation"></div>
+        <div class="note"><h4>Exit<br>Confirmation</h4>Appears when players attempt to leave a puzzle, warning them that quitting may cost a life. The expressive cat character adds an emotional touch, while the clear Resume and Quit buttons let players choose whether to continue playing or exit, creating a more informed experience.</div>
+      </div>
+      <div class="cap">Outro</div>
+
+      <!-- No lives left + stats -->
+      <div class="mw-trio">
+        <div class="phone zoom"><img src="Image/MeowWords/18.png" alt="No lives left"></div>
+        <div class="note"><h4>No Lives Left</h4>Appears when players run out of lives, offering a quick way to recover and return to the puzzle. The free life timer and No Stop Bundle provide recovery options, helping players choose between waiting and purchasing resources.<h4 class="next">Outro Screen Stats</h4>The stats screen displays the player’s progress through cats collected, puzzles solved, and milestones reached. It helps players track their achievements, understand their progress, and stay motivated to reach the next goal.</div>
+        <div class="phone zoom"><img src="Image/MeowWords/19.png" alt="Outro screen stats"></div>
+      </div>
+
+      <!-- Lives bundles + milestone -->
+      <div class="mw-five">
+        <div class="note outline">Offers bundles of 3, 5, or 9 lives at different price points. The clear pricing and visual reward presentation help players compare options easily and continue their gameplay with fewer interruptions.</div>
+        <div class="phone zoom"><img src="Image/MeowWords/20.png" alt="Get more lives"></div>
+        <div class="phone zoom"><img src="Image/MeowWords/21.png" alt="Milestone reward"></div>
+        <div class="phone zoom"><img src="Image/MeowWords/22.png" alt="Milestone reward revealed"></div>
+        <div class="note outline">The milestone screen celebrates players’ progress by unlocking a special badge and revealing a fun fact about the cute cat character. The surprise reward, glowing presentation, and bonus lives and hints make each milestone feel rewarding, adding personality and encouraging players to continue their journey.</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="copy">© 2026 By Mariyam Nesha</div>
+    <a href="index.html" class="f-logo"><img src="Image/Common/Logo.png" alt="MN logo"></a>
+    <div class="social">
+      <span>Follow :</span>
+      <a href="https://www.behance.net/mariyamnesha3" target="_blank" rel="noopener" aria-label="Behance"><img src="Image/Common/Behance.png" alt="Behance"></a>
+      <a href="https://dribbble.com/mary333333333" target="_blank" rel="noopener" aria-label="Dribbble"><img src="Image/Common/Dribbble.png" alt="Dribbble"></a>
+      <a href="mailto:mariyamnesha3@gmail.com" aria-label="Gmail"><img src="Image/Common/Gmail.png" alt="Gmail"></a>
+      <a href="https://www.linkedin.com/in/mariyam-nesha-05b04a190/" target="_blank" rel="noopener" aria-label="LinkedIn"><img src="Image/Common/LinkedIn.png" alt="LinkedIn"></a>
+    </div>
+  </footer>
+
+  <!-- ===== Lightbox (click an image to enlarge) ===== -->
+  <div class="lightbox" id="lightbox">
+    <button class="close" type="button" aria-label="Close">&times;</button>
+    <img alt="">
+  </div>
+
+  <script>
+    /* ----- Lightbox ----- */
+    var lb = document.getElementById('lightbox');
+    var lbImg = lb.querySelector('img');
+
+    document.querySelectorAll('.zoom').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var img = el.querySelector('img');
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('show');
+      });
+    });
+
+    function closeLb() { lb.classList.remove('show'); }
+    lb.addEventListener('click', function (e) { if (e.target !== lbImg) closeLb(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLb(); });
+  </script>
+</body>
+</html>
